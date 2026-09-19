@@ -6,11 +6,15 @@
 #Pipeline
 #objekt-ID til service principal en workflow logger inn som 
 variable "pipeline_principal_id" {
-  description = "Object-ID til service principal-en workflowen logger inn som"
   type        = string
+  description = "Object-ID til service principal-en workflowen logger inn som."
+ 
+  validation {
+    condition     = can(regex("^[0-9a-fA-F-]{36}$", var.pipeline_principal_id))
+    error_message = "Skal være en GUID. Husk: object-ID fra `az ad sp show`, ikke client-ID."
+  }
 }
-
-
+ 
 #State-containeren -> her tfvars-filene lagres 
 #rolle tildeling 
 resource "azurerm_role_assignment" "pipeline_blob_contributor" {
@@ -47,6 +51,13 @@ resource "azurerm_key_vault" "kv" {
 resource "azurerm_role_assignment" "kv_officer_meg" {
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Secrets Officer"
+   principal_id         = data.azurerm_client_config.current.object_id
+  principal_type       = "User"
+}
+
+resource "azurerm_role_assignment" "kv_user_pipeline" {
+  scope                = azurerm_key_vault.kv.id
+  role_definition_name = "Key Vault Secrets User"
   principal_id         = var.pipeline_principal_id
   principal_type       = "ServicePrincipal"
 }

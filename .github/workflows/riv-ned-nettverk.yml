@@ -47,65 +47,65 @@ jobs: #2 jobber i denne workflowen
           echo "Bekreftet. Begrunnelse: $BEGRUNNELSE"
       #stopper jobben med feilstatus 
 
-    riv-ned: #ny jobb 
-      needs: bekreft #avhenger av jobben bekreft 
-      runs-on: ubuntu-latest
-      environment: ${{ inputs.environment }} #gir tilgang til environment-spesifikke secrets
+  riv-ned: #ny jobb
+    needs: bekreft #avhenger av jobben bekreft
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }} #gir tilgang til environment-spesifikke secrets
 
-      defaults:   
-        run: 
-          working-directory: oving5/oppgave-5/stacks/nettverk #Alle run-steg i denne jobben kjøres fra stacks/nettverk 
+    defaults:
+      run:
+        working-directory: oving5/oppgave-5/stacks/nettverk
 
-      env: #Miljøvariabler for jobben 
-        MILJO: ${{ input.environment}} #miljøet som skal rives ned 
-        ARM_USE_OIDC: true
-        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID}}
-        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-        TF_INPUT: false #Terraform feiler i stedet for å bli stående og vente på input, hvis noe mangler 
-        TF_IN_AUTOMATION: true #justerer Terraform output for automatisert kjøring 
+    env:
+      MILJO: ${{ inputs.environment }}
+      ARM_USE_OIDC: true
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      TF_INPUT: false
+      TF_IN_AUTOMATION: true
 
-      steps: 
-        - name: Hent kode 
-          uses: actions/checkout
+    steps:
+      - name: Hent kode
+        uses: actions/checkout@v5
 
-        - name: Installer Terraform 
-          uses: Hashicorp/setup-terraform@v3
-          with: 
-            terraform_wrapper: false 
+      - name: Installer Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
 
-        - name: Logg inn i Azure 
-          uses: azure/login@v2
-          with: 
-            client-id: ${{ secrets.AZURE_CLIENT_ID}}
-            tenant-id: ${{ secrets.ARM_TENANT_ID }}
-            subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      - name: Logg inn i Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-        - name: Hent parameterfila fra Key Vault  #tfvars-filen 
-          run: | 
-            az keyvault secret show \
-              --vault-name "${{ secrets.KEYVAULT_NAME }}" \
-              --name "tfvars-$MILJO" \
-              --query value -o tsv > params.auto.tfvars
+      - name: Hent parameterfila fra Key Vault
+        run: |
+          az keyvault secret show \
+            --vault-name "${{ secrets.KEYVAULT_NAME }}" \
+            --name "tfvars-$MILJO" \
+            --query value -o tsv > params.auto.tfvars
 
-        - name: Init  #backend konfigurasjoner 
-          run: |
-            terraform init \
-              -backend-config="${{ github.workspace }}/oving5/oppgave-5/shared/backend.hcl" \
-              -backend-config="key=env/$MILJO/nettverk.tfstate"
-  
-        - name: Lag en destroy-plan
-          run: terraform plan -destroy -out=tfdestroy
+      - name: Init
+        run: |
+          terraform init \
+            -backend-config="${{ github.workspace }}/oving5/oppgave-5/shared/backend.hcl" \
+            -backend-config="key=env/$MILJO/nettverk.tfstate"
 
-        - name: utfør destroy-planen 
-          run: terraform apply tfdestroy
+      - name: Lag en destroy-plan
+        run: terraform plan -destroy -out=tfdestroy
 
-        - name: vertifiser at det er tomt 
-          run: terraform state list 
+      - name: Utfør destroy-planen
+        run: terraform apply tfdestroy
 
-        - name: Slett parameterfila 
-          if: always()
-          run: rm -f params.auto.tfvars
+      - name: Verifiser at det er tomt
+        run: terraform state list
+
+      - name: Slett parameterfila
+        if: always()
+        run: rm -f params.auto.tfvars
         
 
       

@@ -1,10 +1,10 @@
 locals {
   company  = var.company
-  rgprefix = "${var.company}-${var.project}-${var.enviroment}"
-  saprefix = "${var.company}${var.project}${var.enviroment}"
+  rgprefix = "${var.company}-${var.project}-${var.environment}"
+  saprefix = "${var.company}${var.project}${var.environment}"
 
   common_tags = {
-    environment = var.enviroment
+    environment = var.environment
     owner       = var.owner
     project     = var.project
     costcenter  = var.costcenter

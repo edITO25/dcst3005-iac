@@ -4,9 +4,9 @@ variable "location" {
 }
 
 
-variable "enviroment" {
+variable "environment" {
   type        = string
-  description = "Enviroment"
+  description = "Environment"
 }
 
 variable "owner" {

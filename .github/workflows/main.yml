@@ -28,3 +28,7 @@ jobs:
 
       - name: Hvem er jeg?
         run: az account show --output table
+
+      - name: Midlertidig – hva havner i loggen?
+        run: echo "location er $(az keyvault secret show --vault-name kv-tf-eddpfce9PS --name location --query value -o tsv)"
+

@@ -56,6 +56,6 @@ jobs: #Samling av jobber i workflowen
       - name: Hvem er jeg? #beskriver navn 
       #kjører en shell-kommando på ubuntu-runneren
       #viser hvilken konto/identitet og hvilket abonnement CLI-en faktisk bruker  
-        run: az account show --output table 
+        run: az account show  
 
 

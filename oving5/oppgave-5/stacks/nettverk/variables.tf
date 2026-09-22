@@ -34,5 +34,5 @@ variable "subnets" {
 
 variable "address_space" {
   type = string
-  description = "Adresserommet milgøet disponerer"
+  description = "Adresserommet miljøet disponerer"
 }

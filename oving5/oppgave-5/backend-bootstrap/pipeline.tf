@@ -14,9 +14,11 @@ variable "pipeline_principal_id" {
     error_message = "Skal være en GUID. Husk: object-ID fra `az ad sp show`, ikke client-ID."
   }
 }
+
+#Koden inneholder 3 ulike typer tilganger til ulike ressurser 
  
-#State-containeren -> her tfvars-filene lagres 
-#rolle tildeling 
+#tilgang til State-containeren -> her tfstate-filene lagres 
+#Gir service principal-en (workflow-identiteten) rollen: Storage blob Data Contributor
 resource "azurerm_role_assignment" "pipeline_blob_contributor" {
     scope = azurerm_storage_account.sa.id
     role_definition_name = "Storage Blob Data Contributor"
@@ -47,7 +49,8 @@ resource "azurerm_key_vault" "kv" {
   tags = local.tags
 }
 
-#
+#Gir deg (din bruker-identitet) rollen: Key Vault Secrets Officer 
+#Kan kun gis til mennesker, ikke til pipelines 
 resource "azurerm_role_assignment" "kv_officer_meg" {
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Secrets Officer"
@@ -55,6 +58,8 @@ resource "azurerm_role_assignment" "kv_officer_meg" {
   principal_type       = "User"
 }
 
+#workflowen får lese secrets fra Key Vault 
+#Gir service principal-en (workflow-identiteten) rollen: Key Vault Secrets User 
 resource "azurerm_role_assignment" "kv_user_pipeline" {
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Secrets User"

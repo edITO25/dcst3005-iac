@@ -27,8 +27,4 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Hvem er jeg?
-        run: az account show --output table
-
-      - name: Midlertidig – hva havner i loggen?
-        run: echo "location er $(az keyvault secret show --vault-name kv-tf-eddpfce9 --name location --query value -o tsv)"
-
+        run: az account show 

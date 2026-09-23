@@ -23,7 +23,7 @@ resource "azurerm_resource_group" "rg" {
 
 
 module "compute" {
-  source    = "../../../modules/compute"
+  source    = "../../modules/compute"
   rg_name   = azurerm_resource_group.rg.name
   location  = var.location
   base_name = local.base_name

@@ -1,4 +1,4 @@
-name: nedriving av en app #Navnet på workflow 
+name: riv ned app #Navnet på workflow 
 
 on:
   workflow_dispatch: #Trigges manuellt med bekreftelse 

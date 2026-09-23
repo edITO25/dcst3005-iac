@@ -4,7 +4,6 @@ name: Rull ut app
 #ruller ut nettverks-stacken til dev automatisk med pucj
 #ruller ut nettverks-stacken til test bar når det velges manuellt 
 #ikke et eneste storage account-navn, en eneste parameterverdi eller passord i fila 
- 
 
 on: 
     workflow_dispatch: #Manuell kjøring fra GitHub-UI

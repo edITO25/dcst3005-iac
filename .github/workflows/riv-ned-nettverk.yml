@@ -1,4 +1,4 @@
-name: nedriving av et miljø #Navnet på workflow 
+name: riv ned nettverk #Navnet på workflow 
 
 on:
   workflow_dispatch: #Trigges manuellt med bekreftelse 

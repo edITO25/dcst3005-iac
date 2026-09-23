@@ -6,7 +6,7 @@ variable "rg_name" {
 
 variable "location" {
   type = string
-  default = "Azure-regionen ressursen opprettes i"
+  description = "Azure-regionen ressursen opprettes i"
 }
 
 variable "base_name" {

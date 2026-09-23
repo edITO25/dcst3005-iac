@@ -97,7 +97,8 @@ jobs:  #en jobb i denne workflowen
         run: |
           terraform init \
             -backend-config="${{ github.workspace }}/oblig1/oppgave-1/shared/backend.hcl" \
-            -backend-config="key=env/$MILJO/nettverk.tfstate"
+            -backend-config="key=env/$MILJO/nettverk.tfstate"  
+      #Pathen til nettverk.tfstate 
  
       - name: Validate 
         run: terraform validate #sjekker at konfigurasjonen er syntaktisk og semantisk gyldig før du planlegger/apply

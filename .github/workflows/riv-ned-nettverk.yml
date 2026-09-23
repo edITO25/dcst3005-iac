@@ -93,6 +93,7 @@ jobs: #2 jobber i denne workflowen
           terraform init \
             -backend-config="${{ github.workspace }}/oblig1/oppgave-1/shared/backend.hcl" \
             -backend-config="key=env/$MILJO/nettverk.tfstate"
+      #Pathen til nettverk.tfstate
 
       - name: Lag en destroy-plan
         run: terraform plan -destroy -out=tfdestroy

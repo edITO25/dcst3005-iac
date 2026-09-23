@@ -1,25 +1,16 @@
 #navnet på workflowen 
-name: Rull ut nettverk 
+name: Rull ut app 
 
 #ruller ut nettverks-stacken til dev automatisk med pucj
 #ruller ut nettverks-stacken til test bar når det velges manuellt 
 #ikke et eneste storage account-navn, en eneste parameterverdi eller passord i fila 
  
 
-on: #workflowen trigges på to måter push eller manuelt 
-  push:
-    branches: [main]  #automatisk ved push til main 
-    paths: #dersom endringer treffer destinasjoner definert i paths
-      - 'oblig1/oppgave-1/stacks/nettverk/**'
-      - 'oblig1/oppgave-1/modules/network/**'
-      - 'oblig1/oppgave-1/shared/backend.hcl'
-      - '.github/workflows/deploy-nettverk.yml'
- 
-  #manuelt, der man velger dev eller test fra en nedtrekksliste 
-  workflow_dispatch: #Manuell kjøring fraf GitHub-UI 
+on: 
+    workflow_dispatch: #Manuell kjøring fra GitHub-UI
     inputs:
       environment: 
-        description: Miljø - gjelder bare ved manuell kjøring
+        description: miljø - gjelder bare ved manuell kjøring
         type: choice  #må velge en av alternativene, dev eller test 
         options: [dev, test] #ikke god nok til å rulle ut i prod
         default: dev
@@ -32,7 +23,7 @@ permissions:
 concurrency:  #Sørger for kun én kjøring per miljø 
   #dev og test kan kjøre parallelt 
   #kø dersom samme miljø skal kjøres 
-  group: nettverk-${{ inputs.environment || 'dev' }}
+  group: app-${{ inputs.environment || 'dev' }}
   cancel-in-progress: false  #pågående kjøring får fullføre i stedet for å bli avbrutt av en ny 
  
 jobs:  #en jobb i denne workflowen  
@@ -45,7 +36,7 @@ jobs:  #en jobb i denne workflowen
     defaults:
       run:
         #her run-steg skjer 
-        working-directory: oblig1/oppgave-1/stacks/nettverk #alle run-steg kjører fra stacks/nettverk
+        working-directory: oblig1/oppgave-1/stacks/app #alle run-steg kjører fra stacks/nettverk
       #slipper å skrive cd stacks/nettverk i hvert steg 
  
     env:
@@ -91,13 +82,25 @@ jobs:  #en jobb i denne workflowen
             --vault-name "${{ secrets.KEYVAULT_NAME }}" \
             --name "tfvars-$MILJO" \
             --query value -o tsv > params.auto.tfvars
+          
+        #Hent admin-passordet fra key vault 
+      - name: Hent admin-passord fra Key Vault
+        shell: bash
+        run: |
+          ADMIN_PASSWORD=$(az keyvault secret show \
+            --vault-name "${{ secrets.KEYVAULT_NAME }}" \
+            --name "admin-password" \
+            --query value -o tsv)
+
+          echo "::add-mask::$ADMIN_PASSWORD"
+          echo "TF_VAR_admin_password=$ADMIN_PASSWORD" >> "$GITHUB_ENV"
  
       #bruker backend.hcl for å koble til backend 
       - name: Init
         run: |
           terraform init \
             -backend-config="${{ github.workspace }}/oblig1/oppgave-1/shared/backend.hcl" \
-            -backend-config="key=env/$MILJO/nettverk.tfstate"
+            -backend-config="key=env/$MILJO/app.tfstate"
  
       - name: Validate 
         run: terraform validate #sjekker at konfigurasjonen er syntaktisk og semantisk gyldig før du planlegger/apply
@@ -110,13 +113,13 @@ jobs:  #en jobb i denne workflowen
         #ruller ut nettverks-stacken til valgt miljø 
  
 
-      - name: Verifiser at nettverket finnes i Azure
+      - name: Verifiser at VM finnes i Azure
         run: |
           RG=$(terraform output -raw resource_group_name)
-          VNET=$(terraform output -raw vnet_name)
-          STATE=$(az network vnet show --resource-group "$RG" --name "$VNET" \
+          VM=$(terraform output -raw vm_name)
+          STATE=$(az vm show --resource-group "$RG" --name "$VM" \
                     --query provisioningState -o tsv)
-          echo "$VNET i $RG: $STATE"
+          echo "$VM i $RG: $STATE"
           test "$STATE" = "Succeeded"
 
     #params.auto.tfvars er hentet rett fra Key Valut og kan inneholde sensitve verdier for miljøet 

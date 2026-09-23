@@ -1,10 +1,10 @@
-name: nedriving av et miljø #Navnet på workflow 
+name: nedriving av en app #Navnet på workflow 
 
 on:
   workflow_dispatch: #Trigges manuellt med bekreftelse 
     inputs: 
       environment: 
-        description: Miljø som skal rives ned 
+        description: App som skal rives ned 
         type: choice
         options: [dev,test]
         required: true 
@@ -24,7 +24,7 @@ permissions:
   contents: read #lov til å lese repo-innholdet
 
 concurrency: 
-  group: nettverk-${{ inputs.environment }}  #én kjøring per miljø
+  group: app-${{ inputs.environment }}  #én kjøring per miljø
   cancel-in-progress: false #en ny kjøring for samme miljø, mens en gammel pågår -> den nye havner i kø 
 
 
@@ -54,7 +54,7 @@ jobs: #2 jobber i denne workflowen
 
     defaults:
       run:
-        working-directory: oblig1/oppgave-1/stacks/nettverk
+        working-directory: oblig1/oppgave-1/stacks/app
 
     env:
       MILJO: ${{ inputs.environment }}
@@ -88,11 +88,23 @@ jobs: #2 jobber i denne workflowen
             --name "tfvars-$MILJO" \
             --query value -o tsv > params.auto.tfvars
 
+       #Hent admin-passordet fra key vault 
+      - name: Hent admin-passord fra Key Vault
+        shell: bash
+        run: |
+          ADMIN_PASSWORD=$(az keyvault secret show \
+            --vault-name "${{ secrets.KEYVAULT_NAME }}" \
+            --name "admin-password" \
+            --query value -o tsv)
+
+          echo "::add-mask::$ADMIN_PASSWORD"
+          echo "TF_VAR_admin_password=$ADMIN_PASSWORD" >> "$GITHUB_ENV"
+
       - name: Init
         run: |
           terraform init \
             -backend-config="${{ github.workspace }}/oblig1/oppgave-1/shared/backend.hcl" \
-            -backend-config="key=env/$MILJO/nettverk.tfstate"
+            -backend-config="key=env/$MILJO/app.tfstate"
 
       - name: Lag en destroy-plan
         run: terraform plan -destroy -out=tfdestroy

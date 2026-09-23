@@ -1,0 +1,18 @@
+# Hele forskjellen mellom dev og test ligger i denne fila. Koden er identisk.
+
+shortname = "ed"
+project = "oblig1"
+environment = "dev"
+location = "westeurope"
+
+# Egne /16 per miljø, slik at de kan peeres den dagen de skal.
+#   dev  -> 10.10.0.0/16
+#   test -> 10.20.0.0/16
+address_space = "10.10.0.0/16"
+
+# navn => netnum. Nøkkelen er identiteten, netnum er adressen.
+subnets = {
+  web  = 0
+  app  = 1
+  data = 2
+}

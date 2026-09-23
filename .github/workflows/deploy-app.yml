@@ -5,14 +5,15 @@ name: Rull ut app
 #ruller ut nettverks-stacken til test bar når det velges manuellt 
 #ikke et eneste storage account-navn, en eneste parameterverdi eller passord i fila 
 
-on: 
-    workflow_dispatch: #Manuell kjøring fra GitHub-UI
+on:
+  workflow_dispatch: #Manuell kjøring fra GitHub-UI
     inputs:
-      environment: 
-        description: miljø - gjelder bare ved manuell kjøring
-        type: choice  #må velge en av alternativene, dev eller test 
-        options: [dev, test] #ikke god nok til å rulle ut i prod
+      environment:
+        description: Miljø - gjelder bare ved manuell kjøring
+        type: choice
+        options: [dev, test]
         default: dev
+        required: true
  
 permissions:
   id-token: write #gir workflowen lov til å be GitHub om en OIDC-token

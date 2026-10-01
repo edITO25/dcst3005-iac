@@ -4,7 +4,7 @@
 //Fra azurerem 4.42 kan RBAC slås på i pipeline.tf
 terraform {
   required_version = ">= 1.16.0"
- 
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"

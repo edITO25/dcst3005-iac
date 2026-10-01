@@ -19,5 +19,5 @@ output "backend_hcl_template" {
   EOT
   description = "Lim rett inn i shared/backend.hcl."
 }
- 
+
 

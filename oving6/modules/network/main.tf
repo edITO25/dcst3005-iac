@@ -9,8 +9,8 @@ terraform {
 
 
 resource "azurerm_subnet_network_security_group_association" "snet_nsg" {
-  for_each                  = azurerm_subnet.subnet //gir en kobling per subnet
-   # K5: for_each kjøres RETT OVER subnet-ressursen, ikke over var.subnets en
+  for_each = azurerm_subnet.subnet //gir en kobling per subnet
+  # K5: for_each kjøres RETT OVER subnet-ressursen, ikke over var.subnets en
   # gang til.
   #
   # En ressurs som har for_each, ER et map fra nøkkel til ressurs. Vi arver
@@ -51,16 +51,16 @@ resource "azurerm_subnet" "subnet" {
 
 
 }
-  # cidrsubnet(prefix, newbits, netnum)
-  #   prefix  – adresserommet miljøet ga oss, f.eks. 10.10.0.0/16
-  #   newbits – hvor mange bit vi forlenger prefikset med: /16 + 8 = /24
-  #   netnum  – hvilken av de 256 blokkene vi vil ha, fra 0 og oppover
-  #
-  # K4: netnum kommer fra mapet. Det er DATA som noen har skrevet ned, ikke en
-  # posisjon Terraform har talt seg fram til. Derfor beholder "data" adressen
-  # sin selv om noen setter inn et nytt subnet alfabetisk foran det.
-  #
-  # Fristelsen er å bruke index(keys(var.subnets), each.key) og slippe å skrive
-  # tallene. Ikke gjør det: da er du tilbake til posisjon som identitet, og et
-  # subnet som bytter adresse må rives og bygges på nytt.
+# cidrsubnet(prefix, newbits, netnum)
+#   prefix  – adresserommet miljøet ga oss, f.eks. 10.10.0.0/16
+#   newbits – hvor mange bit vi forlenger prefikset med: /16 + 8 = /24
+#   netnum  – hvilken av de 256 blokkene vi vil ha, fra 0 og oppover
+#
+# K4: netnum kommer fra mapet. Det er DATA som noen har skrevet ned, ikke en
+# posisjon Terraform har talt seg fram til. Derfor beholder "data" adressen
+# sin selv om noen setter inn et nytt subnet alfabetisk foran det.
+#
+# Fristelsen er å bruke index(keys(var.subnets), each.key) og slippe å skrive
+# tallene. Ikke gjør det: da er du tilbake til posisjon som identitet, og et
+# subnet som bytter adresse må rives og bygges på nytt.
 

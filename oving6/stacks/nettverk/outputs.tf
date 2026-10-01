@@ -13,23 +13,23 @@
 
 
 output "subnet_id" {
-    value = module.network.subnet_ids
-    description = "subnet-ID per subnettnavn, leses av App-stacken"
+  value       = module.network.subnet_ids
+  description = "subnet-ID per subnettnavn, leses av App-stacken"
 }
 
 output "subnet_prefixes" {
-    value = module.network.subnet_prefixes
-    description = "subnet adresseprefiks per subnett"
+  value       = module.network.subnet_prefixes
+  description = "subnet adresseprefiks per subnett"
 }
 
 output "vnet_name" {
-    value = module.network.vnet_name
-    description = "leses av vertidiseringssteget"
+  value       = module.network.vnet_name
+  description = "leses av vertidiseringssteget"
 }
 
 
 output "resource_group_name" {
-  value = azurerm_resource_group.rg.name 
+  value       = azurerm_resource_group.rg.name
   description = "Ressursgruppen stacken eier, leses av vertifiseringssteget"
 }
 

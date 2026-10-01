@@ -3,7 +3,7 @@ variable "project" {
 }
 
 variable "environment" {
-  type = string
+  type        = string
   description = "kommer fra parameterfila"
 
   validation {
@@ -28,11 +28,11 @@ variable "location" {
 }
 
 variable "subnets" {
-  type    = map(number)
+  type        = map(number)
   description = "subnetnavn => netum (subnettadressen)."
 }
 
 variable "address_space" {
-  type = string
+  type        = string
   description = "Adresserommet miljøet disponerer"
 }

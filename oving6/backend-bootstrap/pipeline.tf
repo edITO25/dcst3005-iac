@@ -8,7 +8,7 @@
 variable "pipeline_principal_id" {
   type        = string
   description = "Object-ID til service principal-en workflowen logger inn som."
- 
+
   validation {
     condition     = can(regex("^[0-9a-fA-F-]{36}$", var.pipeline_principal_id))
     error_message = "Skal være en GUID. Husk: object-ID fra `az ad sp show`, ikke client-ID."
@@ -16,19 +16,19 @@ variable "pipeline_principal_id" {
 }
 
 #Koden inneholder 3 ulike typer tilganger til ulike ressurser 
- 
+
 #tilgang til State-containeren -> her tfstate-filene lagres 
 #Gir service principal-en (workflow-identiteten) rollen: Storage blob Data Contributor
 resource "azurerm_role_assignment" "pipeline_blob_contributor" {
-    scope = azurerm_storage_account.sa.id
-    role_definition_name = "Storage Blob Data Contributor"
-    principal_id = var.pipeline_principal_id
+  scope                = azurerm_storage_account.sa.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = var.pipeline_principal_id
 
-    #definerer vi principal_type -> slipper Azure å slå opp hva slags konto ID-en tilhører
-    principal_type = "ServicePrincipal"
+  #definerer vi principal_type -> slipper Azure å slå opp hva slags konto ID-en tilhører
+  principal_type = "ServicePrincipal"
 
-    #Disse må eksistere for at workflowen skal kunne aksesere key vault 
-    depends_on = [ azurerm_storage_account.sa, azurerm_storage_container.tfstate ]
+  #Disse må eksistere for at workflowen skal kunne aksesere key vault 
+  depends_on = [azurerm_storage_account.sa, azurerm_storage_container.tfstate]
 }
 
 #Key vault 
@@ -39,14 +39,14 @@ resource "azurerm_key_vault" "kv" {
   tenant_id           = data.azurerm_client_config.current.tenant_id
   sku_name            = "standard"
 
-//Key vault styrer tilgang med role based access control 
-  rbac_authorization_enabled = true 
+  //Key vault styrer tilgang med role based access control 
+  rbac_authorization_enabled = true
   #Slettes vaultet er navnet reservert til perioden er over 
   soft_delete_retention_days = 7
   #true= Ingen kan fjerne vaultet før fristen er ute
   # false= riktig fordi vi skal rydde opp etter oss 
-  purge_protection_enabled   = false
-  tags = local.tags
+  purge_protection_enabled = false
+  tags                     = local.tags
 }
 
 #Gir deg (din bruker-identitet) rollen: Key Vault Secrets Officer 
@@ -54,7 +54,7 @@ resource "azurerm_key_vault" "kv" {
 resource "azurerm_role_assignment" "kv_officer_meg" {
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Secrets Officer"
-   principal_id         = data.azurerm_client_config.current.object_id
+  principal_id         = data.azurerm_client_config.current.object_id
   principal_type       = "User"
 }
 
@@ -68,6 +68,6 @@ resource "azurerm_role_assignment" "kv_user_pipeline" {
 }
 
 output "keyvault_name" {
-  value = azurerm_key_vault.kv.name
+  value       = azurerm_key_vault.kv.name
   description = "Legges inn som environment secret KEYVAULT_NAME i GitHub"
 }

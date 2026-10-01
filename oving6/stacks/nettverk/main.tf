@@ -12,10 +12,12 @@ resource "azurerm_resource_group" "rg" {
 //inneholder variabler som defineres i variables.tf
 module "network" {
   source        = "../../modules/network"
-  rg_name = azurerm_resource_group.rg.name
+  rg_name       = azurerm_resource_group.rg.name
   location      = var.location
   base_name     = local.base_name
   address_space = var.address_space
   subnets       = var.subnets
   tags          = local.tags
 }
+
+#test for porten 

@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   kontroller:
-    name: fmt og validate
+    name: fmt og validate   #Denne workflowen kjører fmt og validate 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -27,7 +27,7 @@ jobs:
 
       - name: Klargjør providere uten backend
         working-directory: oving6/stacks/nettverk
-        run: terraform init -backend=false
+        run: terraform init -backend=false   
 
       - name: Valider koden
         working-directory: oving6/stacks/nettverk

@@ -16,8 +16,7 @@ permissions:
   id-token: write #gir workflowen lov til å be GitHub om en OIDC-token
   #brukes av azure/login og terraform -provideren til å autentisere mot Azure uten passord/hemmelige nøkler 
   contents: read #lov til å lese innholdet i repoet 
-  pull-request: write  #for å kunne skrive kommentaren i pull-request 
-
+  pull-requests: write  #for å kunne skrive kommentaren i pull-request 
 
 concurrency: #Et miljø av gangen 
   group: pr-plan-${{ github.event.pull_request.number }}

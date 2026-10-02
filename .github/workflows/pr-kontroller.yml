@@ -6,6 +6,7 @@ on:
     paths:
       - 'oving6/terraform-projects/**'
       - '.github/workflows/pr-kontroller.yml'
+      - '.github/workflows/pr-plan.yml'
       - 'oving6/stacks/nettverk/**'
 
 permissions:

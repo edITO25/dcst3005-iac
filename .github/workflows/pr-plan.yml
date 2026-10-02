@@ -71,7 +71,7 @@ jobs:
         run: |
           az keyvault secret show \
             --vault-name "${{ secrets.KEYVAULT_NAME }}" \
-            --name "tvars-dev" \
+            --name "tfvars-dev" \
             --query value -o tsv > params.auto.tfvars
 
       - name: Init 

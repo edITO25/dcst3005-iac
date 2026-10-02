@@ -1,0 +1,119 @@
+#plan-utskriften blir en kommentar på pull requesten  
+#slik at den om skal vudere endringen
+
+name: PR-plan 
+
+on: 
+  pull_request: 
+    branches: [main]
+    paths: 
+      - 'oving6/modules/network/**'
+      - '.github/workflows/pr-plan.yml'
+      - 'oving6/stacks/nettverk/**'
+
+
+permissions:
+  id-token: write #gir workflowen lov til å be GitHub om en OIDC-token
+  #brukes av azure/login og terraform -provideren til å autentisere mot Azure uten passord/hemmelige nøkler 
+  contents: read #lov til å lese innholdet i repoet 
+  pull-request: write  #for å kunne skrive kommentaren i pull-request 
+
+
+concurrency: #Et miljø av gangen 
+  group: pr-plan-${{ github.event.pull_request.number }}
+  cancel-in-progress: true   #Påbegynt, apply skal aldri avbrytes 
+
+jobs: 
+  plan: 
+    runs-on: ubuntu-latest  #Runneren 
+    environment: dev 
+
+    defaults: 
+      run: 
+        #Denne mappen vi jobber i 
+        working-directory: oving6/stacks/nettverk   
+    
+    env: 
+     # ARM_* variablene brukes av Terraform azurerm-provideren for å autentisere mot Azure 
+      #når den skal opprette ressurser 
+      ARM_USE_OIDC: true  #Forteller provideren at den skal bruke OIDC-tokenet, ikke client secret 
+      #hentes fra secrets, ikke hardkodet 
+  
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      TF_INPUT: false  #Terraform feiler i stedet for å bli stående og vente på input, hvis noe mangler 
+      TF_IN_AUTOMATION: true #justerer Terraform output for automatisert kjøring 
+
+    steps:
+      - name: Hent koden 
+        uses: actions/checkout@v5
+
+      - name: Installer Terraform 
+        uses: hashicorp/setup-terraform@v3
+
+        with: 
+          terraform_wrapper: false #hindrer ekstra utskrift
+
+      - name: Logg inn i Azure 
+        uses: Azure/login@v3.1.0 
+        with: 
+         #Denne actionen:
+          #ber GitHub om et OIDC-token, tillat pga id-token: write 
+          #sender tokenet til Azure 
+          #Azure undersøker om tokenet kommer fra riktig repo/branch/environment
+          #og at det matcher med federated credentials 
+          #Stemmer = jobben får en kortvarig Azure-session  
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Hent parameterfila for dev
+        run: |
+          az keyvault secret show \
+            --vault-name "${{ secrets.KEYVAULT_NAME }}" \
+            --name "tvars-dev" \
+            --query value -o tsv > params.auto.tfvars
+
+      - name: Init 
+        run: |
+          terraform init \
+            -backend-config="${{ github.workspace }}/oving6/shared/backend.hcl" \
+            -backend-config="key=env/dev/nettverk.tfstate"
+
+      - name: Plan 
+        run: terraform plan -lock=false -no-color -out=tfplan 
+        #lock=false -> en gjennomgang skal ikke stå i veien for en utrulling 
+        #2 personer skal kunne gå en plan lest samtidig 
+    
+
+      - name: Legg planen som kommentar
+        env: #definerer miljøvariabler for steget 
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          #tokenet brukes av gh-CLI for å autentisere mot GitHub for å poste PR-kommentar 
+
+        run: | 
+          {
+            echo "## Terraform plan - dev"
+            echo 
+            echo "<details><summary>Vis hele planen</summary>"
+            echo 
+            echo '```terraform'
+            terraform show -no-color tfplan
+            echo '```'
+            echo 
+            echo "</details>"
+          } > "${{ github.workspace }}/kommentar.md"
+
+          gh pr comment "${{ github.event.pull_request.number}}" \
+            --body-file "${{ github.workspace }}/kommentar.md"
+
+#kommentar.md -> fil som er GitHub Actions runnerens arbeidskatalog 
+#gh pr comment: GitHub CLI-kommando for å legge inn en kommentar på en pull request 
+#guthub.event.pull_request-number: Henter PR-nummeret fra GitHub Actions-konteksten 
+
+#innholdet i kommentar.md brukes som selve kommentarteksten 
+      - name: Slett parameterfila
+        if: always()
+        run: rm -f params.auto.tfvars 
+      

@@ -6,7 +6,7 @@ terraform {
     }
   }
 }
-
+#Test
 
 resource "azurerm_subnet_network_security_group_association" "snet_nsg" {
   for_each = azurerm_subnet.subnet //gir en kobling per subnet

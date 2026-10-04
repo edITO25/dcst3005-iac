@@ -6,7 +6,7 @@ name: Rull ut nettverk
 #ikke et eneste storage account-navn, en eneste parameterverdi eller passord i fila 
  
 
-on: #workflowen trigges på to måter push eller manuelt 
+on: 
   push:
     branches: [main]  #automatisk ved push til main 
     paths: #dersom endringer treffer destinasjoner definert i paths

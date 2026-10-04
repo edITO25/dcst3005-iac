@@ -1,5 +1,6 @@
 #navnet på workflowen 
 name: Rull ut nettverk 
+# test
 
 #ruller ut nettverks-stacken til dev automatisk med pucj
 #ruller ut nettverks-stacken til test bar når det velges manuellt 

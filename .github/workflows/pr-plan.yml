@@ -1,5 +1,7 @@
+#planen mot dev som PR-kommentar -> gjelder kun for dev-miljøet 
 #plan-utskriften blir en kommentar på pull requesten  
 #slik at den om skal vudere endringen
+
 
 name: PR-plan 
 

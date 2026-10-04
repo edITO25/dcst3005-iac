@@ -3,11 +3,6 @@ name: PR-kontroller
 on:
   pull_request: #workflowen trigges av pull_requests som påvirker definerte paths 
     branches: [main]
-    paths:
-      - 'oving6/terraform-projects/**'
-      - '.github/workflows/pr-kontroller.yml'
-      - '.github/workflows/terraform-env.yml'
-      - 'oving6/stacks/nettverk/**'
 
 permissions:
   contents: read  #workflowen kan lese repo 

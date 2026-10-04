@@ -69,8 +69,8 @@ jobs:
       - name: Init 
         run: |
           terraform init \
-          -backend-config=${{ github.workspace }}/oving6/shared/backend.hcl 
-          -backend-config="key=env/${{ inputs.miljo }}/nettverk.tfstate"
+            -backend-config="${{ github.workspace }}/oving6/shared/backend.hcl" \
+            -backend-config="key=env/${{ inputs.miljo }}/nettverk.tfstate"
 
       - name: Validate
         run: terraform validate 
@@ -135,7 +135,7 @@ jobs:
       - name: Init
         run: |
           terraform init \
-            -backend-config="${{ github.workspace }}/oving6/shared/backend.hcl"
+            -backend-config="${{ github.workspace }}/oving6/shared/backend.hcl" \
             -backend-config="key=env/${{ inputs.miljo }}/nettverk.tfstate"
 
 
@@ -150,7 +150,6 @@ jobs:
                     --query provisioningState -o tsv)
           echo "$VNET i $RG: $STATE"
           test "$STATE" = "Succeeded"
-
 
 
 

@@ -31,7 +31,7 @@ resource "azurerm_network_security_group" "nsg" {
   tags                = var.tags
 }
 
-resource "azurerm_virtual_network" "vnet" {
+resource "azurerm_virtual_network" "network" {
   //Navnene settes sammen her, ikke i miljømappa
   name                = format("vnet-%s", var.base_name)
   location            = var.location

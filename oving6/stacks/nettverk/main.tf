@@ -18,6 +18,6 @@ module "network" {
   address_space = var.address_space
   subnets       = var.subnets
   tags          = local.tags
-}
+
 
 #test for porten 

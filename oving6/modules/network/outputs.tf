@@ -13,11 +13,11 @@ output "subnet_prefixes" {
 }
 
 output "vnet_id" {
-  value       = azurerm_virtual_network.vnet.id
+  value       = azurerm_virtual_network.network.id
   description = "Id-en til det virtuelle nettverket" //trengs til blandt annet peering 
 }
 
 output "vnet_name" {
-  value       = azurerm_virtual_network.vnet.name
+  value       = azurerm_virtual_network.network.name
   description = "navnet til det virtuelle nettverket"
 }

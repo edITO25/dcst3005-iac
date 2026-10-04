@@ -46,7 +46,7 @@ resource "azurerm_subnet" "subnet" {
   //Navnene settes sammen her, ikke i miljømappa
   name                 = format("snet-%s-%s", each.key, var.base_name)
   resource_group_name  = var.rg_name
-  virtual_network_name = azurerm_virtual_network.vnet.name
+  virtual_network_name = azurerm_virtual_network.network.name
   address_prefixes     = [cidrsubnet(var.address_space, var.subnet_newbits, each.value)]
 
 
@@ -63,4 +63,3 @@ resource "azurerm_subnet" "subnet" {
 # Fristelsen er å bruke index(keys(var.subnets), each.key) og slippe å skrive
 # tallene. Ikke gjør det: da er du tilbake til posisjon som identitet, og et
 # subnet som bytter adresse må rives og bygges på nytt.
-

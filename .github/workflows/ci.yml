@@ -1,0 +1,38 @@
+name: CI 
+
+on: 
+  pull_request:
+    branches: [main]
+
+
+permissions: 
+  contents: read 
+
+
+concurrency: 
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true 
+
+jobs: 
+  kontroll:
+    name: fmt og validate   #Denne workflowen kjører fmt og validate 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.16.0
+
+      - name: Sjekk formatering
+        run: terraform fmt -check -recursive oving7
+
+      - name: Klargjør providere uten backend
+        working-directory: oving7/terraform-projects/stacks/nettverk
+        run: terraform init -backend=false   
+
+      - name: Valider koden
+        working-directory: oving7/terraform-projects/stacks/nettverk
+        run: terraform validate
+ 
+  

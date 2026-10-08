@@ -24,7 +24,7 @@ permissions:
   contents: read #lov til å lese repo-innholdet
 
 concurrency: 
-  group: nettverk  #én kjøring per miljø
+  group: nettverk-${{ inputs.environment }}  #én kjøring per miljø
   cancel-in-progress: false #en ny kjøring for samme miljø, mens en gammel pågår -> den nye havner i kø 
 
 
@@ -54,7 +54,7 @@ jobs: #2 jobber i denne workflowen
 
     defaults:
       run:
-        working-directory: oving6/stacks/nettverk
+        working-directory: oving7/terraform-projects/stacks/nettverk
 
     env:
       MILJO: ${{ inputs.environment }}
@@ -75,7 +75,7 @@ jobs: #2 jobber i denne workflowen
           terraform_wrapper: false
 
       - name: Logg inn i Azure
-        uses: azure/login@v2
+        uses: azure/login@v3.1.0
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -91,7 +91,7 @@ jobs: #2 jobber i denne workflowen
       - name: Init
         run: |
           terraform init \
-            -backend-config="${{ github.workspace }}/oving6/shared/backend.hcl" \
+            -backend-config="${{ github.workspace }}/oving7/terraform-projects/shared/backend.hcl" \
             -backend-config="key=env/$MILJO/nettverk.tfstate"
       #Pathen til nettverk.tfstate
 

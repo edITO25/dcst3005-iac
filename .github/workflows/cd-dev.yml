@@ -13,7 +13,6 @@ on:
       - 'oving7/terraform-projects/stacks/nettverk/**'
       - 'oving7/terraform-projects/modules/network/**'
       - 'oving7/terraform-projects/shared/backend.hcl'
-      - '.github/workflows/deploy-nettverk.yml'
       - '.github/workflows/cd-dev.yml'
 permissions:
   id-token: write #gir workflowen lov til å be GitHub om en OIDC-token

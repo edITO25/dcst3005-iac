@@ -15,26 +15,38 @@ concurrency:
 
 jobs: 
   kontroll:
-    name: fmt og validate   #Denne workflowen kjører fmt og validate 
+    name: kodekontroll  #Denne workflowen kjører fmt og validate 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - name: Hent koden
+        uses: actions/checkout@v5
 
-      - uses: hashicorp/setup-terraform@v3
+      - name: Installer Terraform 
+        uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.16.0
 
-      - name: Sjekk formatering
-        run: terraform fmt -check -recursive oving7
+      - name: Installer TFLint
+        uses: terraform-linters/setup-tflint@v6
+        with:
+          tflint_version: v0.64.0
 
-      - name: Klargjør providere uten backend
-        working-directory: oving7/terraform-projects/stacks/nettverk
-        run: terraform init -backend=false   
+      - name: Installer Python 
+        uses: actions/setup-python@v7
+        with:  
+          python-version: "3.12"
 
-      - name: Valider koden
-        working-directory: oving7/terraform-projects/stacks/nettverk
-        run: terraform validate
- 
+      - name: Installer Checkov 
+        run: pip install checkov==3.3.21
+
+      - name: Kjør valider.sh
+      #denne filen utfører fmt, validate, TFLint og Checkov, uten tilgang til Azure
+      #stien regnes fra rota av repoet, som alle stier i en workflow 
+        run: bash oving7/terraform-projects/scripts/valider.sh 
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+
   
   plan-dev: 
       name: plan mot dev

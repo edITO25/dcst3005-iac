@@ -1,10 +1,11 @@
 variable "project" {
-  type = string
+  type        = string
+  description = "Navnet på prosjektet, del av navngrunnlaget"
 }
 
 variable "environment" {
   type        = string
-  description = "kommer fra parameterfila"
+  description = "miljønavn: prod, dev eller test"
 
   validation {
     condition     = contains(["prod", "dev", "test", ], var.environment)
@@ -13,13 +14,15 @@ variable "environment" {
 }
 
 variable "shortname" {
-  type = string
+  type        = string
+  description = "Mine initialer, går inn i alle ressursnavn"
 
 }
 
 
 variable "location" {
-  type = string
+  type        = string
+  description = "Azure-regionen ressursen opprettes i"
 
   validation {
     condition     = contains(["northeurope", "uksouth", "westeurope", "norwayeast", "norwaywest", ], var.location)

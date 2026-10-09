@@ -16,6 +16,11 @@ resource "azurerm_resource_group" "rg" {
 
 
 resource "azurerm_storage_account" "sa" {
+  #checkov:skip=CKV2_AZURE_33:Private endpoint krever privat nettverk, som er utenfor faget
+  #checkov:skip=CKV2_AZURE_1:Microsoft-administrerte nøkler holder for et studentoppsett
+  #checkov:skip=CKV_AZURE_59:Runneren leser state over internett
+  #checkov:skip=CKV_AZURE_206:LRS holder; state er beskyttet av versjonering og soft delete
+  #checkov:skip=CKV_AZURE_33:Queue-tjenesten brukes ikke
   name                     = local.sa_name
   resource_group_name      = azurerm_resource_group.rg.name
   location                 = azurerm_resource_group.rg.location
@@ -45,14 +50,25 @@ resource "azurerm_storage_account" "sa" {
 
   }
   tags = local.tags
+
+  #Hindrer destroy av backend 
+  lifecycle {
+    prevent_destroy = true
+  }
 }
+
+
 
 //selve terraform state mappen 
 resource "azurerm_storage_container" "tfstate" {
+  #checkov:skip=CKV2_AZURE_21:Lese-logging for state koster mer enn den gir i et studentoppsett
   name                  = "tfstate"
   storage_account_id    = azurerm_storage_account.sa.id
   container_access_type = "private"
 
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 
@@ -65,6 +81,9 @@ data "azurerm_client_config" "current" {
 
 //Terraform: azurerm_role_assignments
 //gir deg tilgang til blob-data 
+//Å eie ressursgruppa gir deg kontrollplanet: du kan opprette og slette kontoen 
+//Å lese og skrive blobene er dataplanet, og krever sin egen rolle 
+
 resource "azurerm_role_assignment" "blob_contributor" {
   scope = azurerm_storage_account.sa.id
   //gir deg rollen som Storage Blob Data contributor 
@@ -74,5 +93,4 @@ resource "azurerm_role_assignment" "blob_contributor" {
 
   //sørger for at storage account og containeren finnes før rollen settes 
   depends_on = [azurerm_storage_account.sa, azurerm_storage_container.tfstate]
-
 }

@@ -1,9 +1,11 @@
 variable "shortname" {
-  type = string
+  type        = string
+  description = "Mine initialer, for å sikre unikhet i backend ressursnavn"
 }
 
 variable "location" {
-  type = string
+  type        = string
+  description = "geografisk plassering av backend ressurser"
 }
 
 variable "subscription_id" {

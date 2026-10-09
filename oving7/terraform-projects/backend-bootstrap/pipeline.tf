@@ -33,11 +33,20 @@ resource "azurerm_role_assignment" "pipeline_blob_contributor" {
 
 #Key vault 
 resource "azurerm_key_vault" "kv" {
+  #checkov:skip=CKV_AZURE_110:Purge protection hindrer opprydding i et studentoppsett
+  #checkov:skip=CKV2_AZURE_32:Private endpoint krever privat nettverk, som er utenfor faget
+  #checkov:skip=CKV_AZURE_42:Krever purge protection, se CKV_AZURE_110
+  #checkov:skip=CKV_AZURE_189:Runneren henter parameterfila over internett
+  #checkov:skip=CKV_AZURE_109:Runneren henter parameterfila over internett
   name                = substr(lower("kv-tf-${var.shortname}${random_string.suffix.result}"), 0, 24)
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   tenant_id           = data.azurerm_client_config.current.tenant_id
   sku_name            = "standard"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 
   //Key vault styrer tilgang med role based access control 
   rbac_authorization_enabled = true

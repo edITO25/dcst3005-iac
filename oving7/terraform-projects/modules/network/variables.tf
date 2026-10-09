@@ -1,15 +1,16 @@
-//rg_name og location må komme utenfra
 variable "rg_name" {
-  type = string
+  type        = string
+  description = "Navnet på ressursgruppen nettverket skal ligge i "
 }
 
 variable "location" {
-  type = string
+  type        = string
+  description = "Azure-regionen ressursen opprettes i"
 }
 
 variable "base_name" {
   type        = string
-  description = " MOdulen setter selv på prefiksene, vnet, snet og nsg"
+  description = " Modulen setter selv på prefiksene, vnet, snet og nsg"
 }
 
 variable "address_space" {

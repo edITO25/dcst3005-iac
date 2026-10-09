@@ -1,4 +1,6 @@
 terraform {
+  required_version = ">= 1.16.0"
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -7,6 +9,7 @@ terraform {
   }
 }
 #Test
+
 
 resource "azurerm_subnet_network_security_group_association" "snet_nsg" {
   for_each = azurerm_subnet.subnet //gir en kobling per subnet

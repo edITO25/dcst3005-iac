@@ -13,17 +13,17 @@
 
 
 output "subnet_id" {
-  value       = module.network.subnet_ids
+  value       = module.nettverk.subnet_ids
   description = "subnet-ID per subnettnavn, leses av App-stacken"
 }
 
 output "subnet_prefixes" {
-  value       = module.network.subnet_prefixes
+  value       = module.nettverk.subnet_prefixes
   description = "subnet adresseprefiks per subnett"
 }
 
 output "vnet_name" {
-  value       = module.network.vnet_name
+  value       = module.nettverk.vnet_name
   description = "leses av vertidiseringssteget"
 }
 

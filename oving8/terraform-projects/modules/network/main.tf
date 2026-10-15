@@ -47,7 +47,7 @@ resource "azurerm_subnet" "subnet" {
   for_each = var.subnets
 
   //Navnene settes sammen her, ikke i miljømappa
-  name                 = format("snet-%s-%s", each.key, var.base_name)
+  name                 = format("subnet-%s-%s", each.key, var.base_name)
   resource_group_name  = var.rg_name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = [cidrsubnet(var.address_space, var.subnet_newbits, each.value)]

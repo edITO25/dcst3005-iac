@@ -32,7 +32,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: terraform-projects/stacks/nettverk
+        working-directory: oving8/terraform-projects/stacks/nettverk
 
     env:
       ARM_USE_OIDC: true
@@ -68,7 +68,7 @@ jobs:
       - name: Init
         run: |
           terraform init \
-            -backend-config="${{ github.workspace }}/terraform-projects/shared/backend.hcl" \
+            -backend-config="${{ github.workspace }}/oving8/terraform-projects/shared/backend.hcl" \
             -backend-config="key=env/dev/nettverk.tfstate"
 
       # Kjernen i hele workflowen. Tre detaljer, alle med vilje:

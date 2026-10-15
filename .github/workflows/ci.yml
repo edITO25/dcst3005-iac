@@ -47,7 +47,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
 
 
-  
+
   plan-dev: 
       name: CI / plan mot dev
       needs: kontroll 
@@ -139,3 +139,4 @@ jobs:
       
 #test
 #test1
+#test2

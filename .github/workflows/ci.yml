@@ -42,7 +42,7 @@ jobs:
       - name: Kjør valider.sh
       #denne filen utfører fmt, validate, TFLint og Checkov, uten tilgang til Azure
       #stien regnes fra rota av repoet, som alle stier i en workflow 
-        run: bash oving7/terraform-projects/scripts/valider.sh 
+        run: bash oving8/terraform-projects/scripts/valider.sh 
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
@@ -61,7 +61,7 @@ jobs:
       defaults: 
         run: 
           #Denne mappen vi jobber i 
-          working-directory: oving7/terraform-projects/stacks/nettverk   
+          working-directory: oving8/terraform-projects/stacks/nettverk   
       
       env: 
       # ARM_* variablene brukes av Terraform azurerm-provideren for å autentisere mot Azure 
@@ -102,7 +102,7 @@ jobs:
         - name: Init 
           run: |
             terraform init \
-              -backend-config="${{ github.workspace }}/oving7/terraform-projects/shared/backend.hcl" \
+              -backend-config="${{ github.workspace }}/oving8/terraform-projects/shared/backend.hcl" \
               -backend-config="key=env/dev/nettverk.tfstate"
         - name: Plan 
           run: terraform plan -lock=false -no-color -out=tfplan 

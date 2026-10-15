@@ -29,7 +29,7 @@ jobs:
  
     defaults:
       run:
-        working-directory: oving7/terraform-projects/stacks/nettverk
+        working-directory: oving8/terraform-projects/stacks/nettverk
     env:
       ARM_USE_OIDC: true
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
@@ -83,7 +83,7 @@ jobs:
       - name: Init
         run: |
           terraform init \
-            -backend-config="${{ github.workspace }}/oving7/terraform-projects/shared/backend.hcl" \
+            -backend-config="${{ github.workspace }}/oving8/terraform-projects/shared/backend.hcl" \
             -backend-config="key=env/prod/nettverk.tfstate"
         # Planen lagres i en fil ...
       - name: Plan

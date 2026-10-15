@@ -10,9 +10,9 @@ on:
   push:
     branches: [main]  #automatisk ved push til main 
     paths: #dersom endringer treffer destinasjoner definert i paths
-      - 'oving7/terraform-projects/stacks/nettverk/**'
-      - 'oving7/terraform-projects/modules/network/**'
-      - 'oving7/terraform-projects/shared/backend.hcl'
+      - 'oving8/terraform-projects/stacks/nettverk/**'
+      - 'oving8/terraform-projects/modules/network/**'
+      - 'oving8/terraform-projects/shared/backend.hcl'
       - '.github/workflows/cd-dev.yml'
 permissions:
   id-token: write #gir workflowen lov til å be GitHub om en OIDC-token
@@ -30,7 +30,7 @@ jobs:
  
     defaults:
       run:
-        working-directory: oving7/terraform-projects/stacks/nettverk
+        working-directory: oving8/terraform-projects/stacks/nettverk
     env:
       ARM_USE_OIDC: true
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
@@ -65,7 +65,7 @@ jobs:
       - name: Init
         run: |
           terraform init \
-            -backend-config="${{ github.workspace }}/oving7/terraform-projects/shared/backend.hcl" \
+            -backend-config="${{ github.workspace }}/oving8/terraform-projects/shared/backend.hcl" \
             -backend-config="key=env/dev/nettverk.tfstate"
         # Planen lagres i en fil ...
       - name: Plan

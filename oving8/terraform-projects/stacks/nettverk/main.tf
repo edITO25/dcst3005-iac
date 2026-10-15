@@ -10,7 +10,7 @@ resource "azurerm_resource_group" "rg" {
 }
 
 //inneholder variabler som defineres i variables.tf
-module "network" {
+module "nettverk" {
   source        = "../../modules/network"
   rg_name       = azurerm_resource_group.rg.name
   location      = var.location

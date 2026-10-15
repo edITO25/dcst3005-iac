@@ -15,7 +15,7 @@ concurrency:
 
 jobs: 
   kontroll:
-    name: kodekontroll  #Denne workflowen kjører fmt og validate 
+    name: CI /kodekontroll  #Denne workflowen kjører fmt og validate 
     runs-on: ubuntu-latest
     steps:
       - name: Hent koden
@@ -49,7 +49,7 @@ jobs:
 
   
   plan-dev: 
-      name: plan mot dev
+      name: CI / plan mot dev
       needs: kontroll 
       runs-on: ubuntu-latest  #Runneren 
       environment: dev 
